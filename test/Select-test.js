@@ -2224,6 +2224,17 @@ describe('Select', () => {
 					'to contain no elements matching', '.Select-noresults');
 			});
 
+			it('doesn\'t displays outer when menu is null', () => {
+
+				wrapper.setPropsForChild({
+					noResultsText: ''
+				});
+
+				typeSearchText('DOES NOT EXIST');
+				expect(ReactDOM.findDOMNode(instance),
+					'to contain no elements matching', '.Select-menu-outer');
+			});
+
 			it('supports updating the text', () => {
 
 				wrapper.setPropsForChild({
@@ -2716,6 +2727,25 @@ describe('Select', () => {
 
 				expect(ReactDOM.findDOMNode(instance), 'to contain no elements matching', '.Select-prompt');
 				expect(ReactDOM.findDOMNode(instance), 'to contain no elements matching', '.Select-noresults');
+			});
+		});
+
+		describe('with tabSelectsValue=false', () => {
+
+			beforeEach(() => {
+
+				instance = createControl({
+					options: defaultOptions,
+					tabSelectsValue: false
+				});
+			});
+
+			it('should not accept when tab is pressed', () => {
+
+				// Search 'h', should only show 'Three'
+				typeSearchText('h');
+				pressTabToAccept();
+				expect(onChange, 'was not called');
 			});
 		});
 

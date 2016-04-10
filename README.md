@@ -85,8 +85,9 @@ function logChange(val) {
 You can enable multi-value selection by setting `multi={true}`. In this mode:
 
 * Selected options will be removed from the dropdown menu
-* The values of the selected items are joined using the `delimiter` property to create the input value
-* A simple value, if provided, will be split using the `delimiter` property
+* The selected values are submitted in multiple `<input type="hidden">` fields, use `joinValues` to submit joined values in a single field instead
+* The values of the selected items are joined using the `delimiter` prop to create the input value when `joinValues` is true
+* A simple value, if provided, will be split using the `delimiter` prop
 * The `onChange` event provides an array of the selected options as the second argument
 * The first argument to `onChange` is always a string, regardless of whether the values of the selected options are numbers or strings
 * By default, only options in the `options` array can be selected. Setting `allowCreate` to true allows new options to be created if they do not already exist.
@@ -300,6 +301,7 @@ Check out the demo site for a more complete example of this.
 	searchable 	|	bool	|	true		|	whether to enable searching feature or not
 	searchingText	|	string	|	'Searching...'	|	message to display whilst options are loading via asyncOptions, or when `isLoading` is true
 	searchPromptText |	string	|	'Type to search'	|	label to prompt for search input
+	tabSelectsValue	|	bool	|	true	|	whether to select the currently focused value when the `[tab]` key is pressed
 	value 		|	any	|	undefined	|	initial field value
 	valueKey	|	string	|	'value'		|	the option property to use for the value
 	valueRenderer	|	func	|	undefined	|	function which returns a custom way to render the value selected
