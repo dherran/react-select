@@ -849,6 +849,29 @@ function stringifyValue(value) {
 	}
 }
 
+if (!Array.prototype.findIndex) {
+	Array.prototype.findIndex = function (predicate) {
+		if (this === null) {
+			throw new TypeError('Array.prototype.findIndex called on null or undefined');
+		}
+		if (typeof predicate !== 'function') {
+			throw new TypeError('predicate must be a function');
+		}
+		var list = Object(this);
+		var length = list.length >>> 0;
+		var thisArg = arguments[1];
+		var value;
+
+		for (var i = 0; i < length; i++) {
+			value = list[i];
+			if (predicate.call(thisArg, value, i, list)) {
+				return i;
+			}
+		}
+		return -1;
+	};
+}
+
 var stringOrNode = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]);
 
 var instanceId = 1;
@@ -914,6 +937,7 @@ var Select = _react2['default'].createClass({
 		options: _react2['default'].PropTypes.array, // array of options
 		pageSize: _react2['default'].PropTypes.number, // number of entries to page when using page up/down keys
 		placeholder: stringOrNode, // field placeholder, displayed when there's no value
+		removeSelected: _react2['default'].PropTypes.bool, // whether the selected option is removed from the dropdown on multi selects
 		required: _react2['default'].PropTypes.bool, // applies HTML5 required attribute when needed
 		resetValue: _react2['default'].PropTypes.any, // value to use when you clear the control
 		scrollMenuIntoView: _react2['default'].PropTypes.bool, // boolean to enable the viewport to shift so that the full menu fully visible when engaged
@@ -965,6 +989,7 @@ var Select = _react2['default'].createClass({
 			optionComponent: _Option2['default'],
 			pageSize: 5,
 			placeholder: 'Select...',
+			removeSelected: true,
 			required: false,
 			scrollMenuIntoView: true,
 			searchable: true,
@@ -1173,7 +1198,7 @@ var Select = _react2['default'].createClass({
 			});
 		} else {
 			// otherwise, focus the input and open the menu
-			this._openAfterFocus = true;
+			this._openAfterFocus = this.props.openOnFocus;
 			this.focus();
 		}
 	},
@@ -1457,7 +1482,14 @@ var Select = _react2['default'].createClass({
 				inputValue: '',
 				focusedIndex: null
 			}, function () {
-				_this3.addValue(value);
+				var valueArray = _this3.getValueArray();
+				if (valueArray.find(function (i) {
+					return i[_this3.props.valueKey] === value[_this3.props.valueKey];
+				})) {
+					_this3.removeValue(value);
+				} else {
+					_this3.addValue(value);
+				}
 			});
 		} else {
 			this.setState({
@@ -1919,7 +1951,7 @@ var Select = _react2['default'].createClass({
 		var _this8 = this;
 
 		var valueArray = this.getValueArray(this.props.value);
-		var options = this._visibleOptions = this.filterOptions(this.props.multi ? this.getValueArray(this.props.value) : null);
+		var options = this._visibleOptions = this.filterOptions(this.props.multi && this.props.removeSelected ? valueArray : null);
 		var isOpen = this.state.isOpen;
 		if (this.props.multi && !options.length && valueArray.length && !this.state.inputValue) isOpen = false;
 		var focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
@@ -1983,7 +2015,7 @@ var Select = _react2['default'].createClass({
 				this.renderClear(),
 				this.renderArrow()
 			),
-			isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null
+			isOpen ? this.renderOuter(options, valueArray, focusedOption) : null
 		);
 	}
 
