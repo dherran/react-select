@@ -1482,7 +1482,7 @@ var Select = _react2['default'].createClass({
 				inputValue: '',
 				focusedIndex: null
 			}, function () {
-				var valueArray = _this3.getValueArray();
+				var valueArray = _this3.getValueArray(_this3.props.value);
 				if (valueArray.find(function (i) {
 					return i[_this3.props.valueKey] === value[_this3.props.valueKey];
 				})) {
@@ -1526,9 +1526,11 @@ var Select = _react2['default'].createClass({
 	},
 
 	removeValue: function removeValue(value) {
+		var _this4 = this;
+
 		var valueArray = this.getValueArray(this.props.value);
 		this.setValue(valueArray.filter(function (i) {
-			return i !== value;
+			return i[_this4.props.valueKey] !== value[_this4.props.valueKey];
 		}));
 		this.focus();
 	},
@@ -1673,7 +1675,7 @@ var Select = _react2['default'].createClass({
 	},
 
 	renderValue: function renderValue(valueArray, isOpen) {
-		var _this4 = this;
+		var _this5 = this;
 
 		var renderLabel = this.props.valueRenderer || this.getOptionLabel;
 		var ValueComponent = this.props.valueComponent;
@@ -1690,12 +1692,12 @@ var Select = _react2['default'].createClass({
 				return _react2['default'].createElement(
 					ValueComponent,
 					{
-						id: _this4._instancePrefix + '-value-' + i,
-						instancePrefix: _this4._instancePrefix,
-						disabled: _this4.props.disabled || value.clearableValue === false,
-						key: 'value-' + i + '-' + value[_this4.props.valueKey],
+						id: _this5._instancePrefix + '-value-' + i,
+						instancePrefix: _this5._instancePrefix,
+						disabled: _this5.props.disabled || value.clearableValue === false,
+						key: 'value-' + i + '-' + value[_this5.props.valueKey],
 						onClick: onClick,
-						onRemove: _this4.removeValue,
+						onRemove: _this5.removeValue,
 						value: value
 					},
 					renderLabel(value, i),
@@ -1724,7 +1726,7 @@ var Select = _react2['default'].createClass({
 
 	renderInput: function renderInput(valueArray, focusedOptionIndex) {
 		var _classNames,
-		    _this5 = this;
+		    _this6 = this;
 
 		var className = (0, _classnames2['default'])('Select-input', this.props.inputProps.className);
 		var isOpen = !!this.state.isOpen;
@@ -1746,7 +1748,7 @@ var Select = _react2['default'].createClass({
 			onChange: this.handleInputChange,
 			onFocus: this.handleInputFocus,
 			ref: function ref(_ref) {
-				return _this5.input = _ref;
+				return _this6.input = _ref;
 			},
 			required: this.state.required,
 			value: this.state.inputValue
@@ -1772,7 +1774,7 @@ var Select = _react2['default'].createClass({
 				onBlur: this.handleInputBlur,
 				onFocus: this.handleInputFocus,
 				ref: function (ref) {
-					return _this5.input = ref;
+					return _this6.input = ref;
 				},
 				'aria-readonly': '' + !!this.props.disabled,
 				style: { border: 0, width: 1, display: 'inline-block' } }));
@@ -1877,17 +1879,17 @@ var Select = _react2['default'].createClass({
 	},
 
 	renderHiddenField: function renderHiddenField(valueArray) {
-		var _this6 = this;
+		var _this7 = this;
 
 		if (!this.props.name) return;
 		if (this.props.joinValues) {
 			var value = valueArray.map(function (i) {
-				return stringifyValue(i[_this6.props.valueKey]);
+				return stringifyValue(i[_this7.props.valueKey]);
 			}).join(this.props.delimiter);
 			return _react2['default'].createElement('input', {
 				type: 'hidden',
 				ref: function (ref) {
-					return _this6.value = ref;
+					return _this7.value = ref;
 				},
 				name: this.props.name,
 				value: value,
@@ -1897,9 +1899,9 @@ var Select = _react2['default'].createClass({
 			return _react2['default'].createElement('input', { key: 'hidden.' + index,
 				type: 'hidden',
 				ref: 'value' + index,
-				name: _this6.props.name,
-				value: stringifyValue(item[_this6.props.valueKey]),
-				disabled: _this6.props.disabled });
+				name: _this7.props.name,
+				value: stringifyValue(item[_this7.props.valueKey]),
+				disabled: _this7.props.disabled });
 		});
 	},
 
@@ -1922,7 +1924,7 @@ var Select = _react2['default'].createClass({
 	},
 
 	renderOuter: function renderOuter(options, valueArray, focusedOption) {
-		var _this7 = this;
+		var _this8 = this;
 
 		var menu = this.renderMenu(options, valueArray, focusedOption);
 		if (!menu) {
@@ -1932,12 +1934,12 @@ var Select = _react2['default'].createClass({
 		return _react2['default'].createElement(
 			'div',
 			{ ref: function (ref) {
-					return _this7.menuContainer = ref;
+					return _this8.menuContainer = ref;
 				}, className: 'Select-menu-outer', style: this.props.menuContainerStyle },
 			_react2['default'].createElement(
 				'div',
 				{ ref: function (ref) {
-						return _this7.menu = ref;
+						return _this8.menu = ref;
 					}, role: 'listbox', className: 'Select-menu', id: this._instancePrefix + '-list',
 					style: this.props.menuStyle,
 					onScroll: this.handleMenuScroll,
@@ -1948,7 +1950,7 @@ var Select = _react2['default'].createClass({
 	},
 
 	render: function render() {
-		var _this8 = this;
+		var _this9 = this;
 
 		var valueArray = this.getValueArray(this.props.value);
 		var options = this._visibleOptions = this.filterOptions(this.props.multi && this.props.removeSelected ? valueArray : null);
@@ -1986,7 +1988,7 @@ var Select = _react2['default'].createClass({
 		return _react2['default'].createElement(
 			'div',
 			{ ref: function (ref) {
-					return _this8.wrapper = ref;
+					return _this9.wrapper = ref;
 				},
 				className: className,
 				style: this.props.wrapperStyle },
@@ -1994,7 +1996,7 @@ var Select = _react2['default'].createClass({
 			_react2['default'].createElement(
 				'div',
 				{ ref: function (ref) {
-						return _this8.control = ref;
+						return _this9.control = ref;
 					},
 					className: 'Select-control',
 					style: this.props.style,
@@ -2264,7 +2266,9 @@ function menuRenderer(_ref) {
 	var Option = optionComponent;
 
 	return options.map(function (option, i) {
-		var isSelected = valueArray && valueArray.indexOf(option) > -1;
+		var isSelected = valueArray && valueArray.findIndex(function (x) {
+			return x[valueKey] == option[valueKey];
+		}) > -1;
 		var isFocused = option === focusedOption;
 		var optionClass = (0, _classnames2['default'])(optionClassName, {
 			'Select-option': true,
